@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { flexboxProps } from "../../../utils/types/flexbox";
 import { selectChild } from "../../../utils/functions/selectChild";
+import { FlexboxMain, Container, Child } from "../../../utils/styles/Flexbox.style";
 
 export default function Flexbox({config, set}: flexboxProps) {
     const [ childSelected, setChildSelected ] = useState(0);
     const [ childs, setChilds ] = useState([{}]);
     const [ numberChilds, setNumberChilds] = useState(1);
-    const {width, height, display, direction, wrap, justify, items, gap} = config.container;
+    const { width, height, display, direction, wrap, justify, items, gap } = config.container;
 
     useEffect(() => {
         setChilds(() => {
@@ -67,7 +68,7 @@ export default function Flexbox({config, set}: flexboxProps) {
     }
 
     return (
-        <main>
+        <FlexboxMain config={config}>
             <h1>Flexbox</h1>
 
             <form>
@@ -106,7 +107,7 @@ export default function Flexbox({config, set}: flexboxProps) {
                     <div>
                         <input type="checkbox" name="activeJustify" id="activeJustify" />
                         <label htmlFor="justify">justify-Content</label>
-                        <input type="text" id="justify" name="justify" defaultValue={"initial"}/>
+                        <input type="text" id="justify" name="justify" defaultValue={"flex-start"}/>
                     </div>
                     <div>
                         <input type="checkbox" name="activeItems" id="activeItems" />
@@ -158,11 +159,11 @@ export default function Flexbox({config, set}: flexboxProps) {
 
             <div className="flexbox">
                 <p>Container</p>
-                <div className="container">
+                <Container className="container">
                     {
-                        childs.length != 0 && childs.map((_child, index) => <div key={index} className="child" data-id={index+1} onClick={(e) => selectChild(e, setChildSelected)}>{index+1}</div>)
+                        childs.length != 0 && childs.map((_child, index) => <Child key={index} className="child" data-id={index+1} onClick={(e) => selectChild(e, setChildSelected)}>{index+1}</Child>)
                     }
-                </div>
+                </Container>
             </div>
 
             <section>
@@ -202,6 +203,6 @@ export default function Flexbox({config, set}: flexboxProps) {
                     </>) : ("")
                 }
             </section>
-        </main>
+        </FlexboxMain>
     )
 }
