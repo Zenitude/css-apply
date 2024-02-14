@@ -1,4 +1,4 @@
-export type flexboxType = {
+export type FlexboxType = {
     container: {
         width: { size: number, unit: string};
         height: { size: number, unit: string};
@@ -17,7 +17,12 @@ export type flexboxType = {
     }[];
 }
 
-export type flexboxProps = {
-    config: flexboxType;
-    set: React.Dispatch<React.SetStateAction<flexboxType>>;
+export type FlexboxProps = {
+    config: FlexboxType;
+    set?: React.Dispatch<React.SetStateAction<FlexboxType>>;
+}
+
+export type ChildProps = {
+    place: number;
+    config: FlexboxType;
 }

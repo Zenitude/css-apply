@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
-import { flexboxProps } from "../../../utils/types/flexbox";
+import { useState, useEffect, useContext } from "react";
+import { Context } from "../../../utils/context/Context";
 import { selectChild } from "../../../utils/functions/selectChild";
 import { FlexboxMain, Container, Child } from "../../../utils/styles/Flexbox.style";
 
-export default function Flexbox({config, set}: flexboxProps) {
+export default function Flexbox() {
+    const { flex, setFlex } = useContext(Context)!;
     const [ childSelected, setChildSelected ] = useState(0);
     const [ childs, setChilds ] = useState([{}]);
     const [ numberChilds, setNumberChilds] = useState(1);
-    const { width, height, display, direction, wrap, justify, items, gap } = config.container;
+    const { width, height, display, direction, wrap, justify, items, gap } = flex.container;
 
     useEffect(() => {
         setChilds(() => {
@@ -21,7 +22,7 @@ export default function Flexbox({config, set}: flexboxProps) {
     }, [numberChilds])
 
     useEffect(() => {
-        set(prev => {
+        setFlex(prev => {
             const previous = {...prev};
             for(let i = 0 ; i <= childs.length ; i++) {
                 if(i === 0) {previous.children = [];}
@@ -37,14 +38,14 @@ export default function Flexbox({config, set}: flexboxProps) {
             }
             return previous;
         })
-    }, [childs, set])
+    }, [childs, setFlex])
 
     const modifChild = (e: React.ChangeEvent<HTMLInputElement>, index:number) => {
         const {value, name} = e.currentTarget;
         const parent = e.currentTarget.parentElement;
         let selectBasis, valueBasis;
 
-        set(prev => {
+        setFlex(prev => {
             const previous = {...prev};
             const child = previous.children[index];
             switch(name) {
@@ -68,7 +69,7 @@ export default function Flexbox({config, set}: flexboxProps) {
     }
 
     return (
-        <FlexboxMain config={config}>
+        <FlexboxMain config={flex}>
             <h1>Flexbox</h1>
 
             <form>
@@ -80,9 +81,9 @@ export default function Flexbox({config, set}: flexboxProps) {
                     <legend>Container Principal</legend>
                     <div>
                         <label htmlFor="width">Width</label>
-                        <input type="number" min={240} id={"width"} defaultValue={240}/>
-                        <select name="widthmesure" id="widthmesure">
-                            <option value="px" selected>px</option>
+                        <input type="number" min={240} max={1980} id={"width"} defaultValue={240}/>
+                        <select name="widthmesure" id="widthmesure" defaultValue={"px"}>
+                            <option value="px">px</option>
                             <option value="%">%</option>
                             <option value="rem">rem</option>
                             <option value="em">em</option>
@@ -92,8 +93,8 @@ export default function Flexbox({config, set}: flexboxProps) {
                     <div>
                         <label htmlFor="height">Height</label>
                         <input type="number" min={10} id={"height"} defaultValue={240}/>
-                        <select name="heightmesure" id="heightmesure">
-                            <option value="px" selected>px</option>
+                        <select name="heightmesure" id="heightmesure" defaultValue={"px"}>
+                            <option value="px">px</option>
                             <option value="%">%</option>
                             <option value="rem">rem</option>
                             <option value="em">em</option>
@@ -118,8 +119,8 @@ export default function Flexbox({config, set}: flexboxProps) {
                         <input type="checkbox" name="activeGap" id="activeGap" />
                         <label htmlFor="gap">gap</label>
                         <input type="number" id="gap" name="gap" min="0" defaultValue={0} />
-                        <select name="gapmesure" id="gapmesure">
-                            <option value="px" selected>px</option>
+                        <select name="gapmesure" id="gapmesure" defaultValue={"px"}>
+                            <option value="px">px</option>
                             <option value="%">%</option>
                             <option value="rem">rem</option>
                             <option value="em">em</option>
@@ -136,7 +137,7 @@ export default function Flexbox({config, set}: flexboxProps) {
                     </div>
                     <div>
                         <label htmlFor="grow">flex-grow</label>
-                        <input type="number" min={0} defaultValue={0} id="grow" name="grow" onChange={(e) => modifChild(e, childSelected)}/>
+                        <input type="number" min={0} defaultValue={1} id="grow" name="grow" onChange={(e) => modifChild(e, childSelected)}/>
                     </div>
                     <div>
                         <label htmlFor="shrink">flex-shrink</label>
@@ -145,8 +146,8 @@ export default function Flexbox({config, set}: flexboxProps) {
                     <div>
                         <label htmlFor="basis">flex-basis</label>
                         <input type="number" name="basis" id="basis" defaultValue={0} onChange={(e) => modifChild(e, childSelected)}/>
-                        <select name="basisUnit" id="basisUnit">
-                            <option value="px" selected>px</option>
+                        <select name="basisUnit" id="basisUnit" defaultValue={"px"}>
+                            <option value="px">px</option>
                             <option value="%">%</option>
                             <option value="rem">rem</option>
                             <option value="em">em</option>
@@ -161,7 +162,7 @@ export default function Flexbox({config, set}: flexboxProps) {
                 <p>Container</p>
                 <Container className="container">
                     {
-                        childs.length != 0 && childs.map((_child, index) => <Child key={index} className="child" data-id={index+1} onClick={(e) => selectChild(e, setChildSelected)}>{index+1}</Child>)
+                        childs.length != 0 && childs.map((_child, index) => <Child key={index} className="child" data-id={index+1} place={index} config={flex} onClick={(e) => selectChild(e, setChildSelected)}>{index+1}</Child>)
                     }
                 </Container>
             </div>
@@ -183,10 +184,10 @@ export default function Flexbox({config, set}: flexboxProps) {
                     `}
                 </code>
                 {
-                    config.children.length !== 0
+                    flex.children.length !== 0
                     ? (<>
                         {
-                            config.children.map(({self, grow, shrink, basis}, index) => (
+                            flex.children.map(({self, grow, shrink, basis}, index) => (
                                 <div key={index}>
                                     <code>
                                         {`
