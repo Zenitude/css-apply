@@ -14,6 +14,7 @@ export const GlobalStyle = createGlobalStyle`
 
     :root {
         --black: rgba(0,0,0,1);
+        --blue: rgba(0,0,255,1)
     }
 
     #root {
